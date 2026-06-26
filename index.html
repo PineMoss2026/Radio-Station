@@ -1,0 +1,147 @@
+/**
+* Social Stream EZ - Core Application Controller Matrix
+* GitHub Verified Base Build File with Social Discovery Layer
+*/
+
+const uiStrings = {
+    en: { treasury: "🔑 Secure Treasury Module", billing: "🪙 Core Billing Engine:", protection: "System Protections", console: "10-Channel Universal Switchboard Console", lock: "🔒 10-Channel Switchboard Locked" },
+    es: { treasury: "🔑 Módulo de Tesorería Seguro", billing: "🪙 Motor de Facturación Principal:", protection: "Protecciones del Sistema", console: "Consola de Panel Universal de 10 Canales", lock: "🔒 Mesa de Control Bloqueada" },
+    fr: { treasury: "🔑 Module de Trésorerie Sécurisé", billing: "🪙 Moteur de Facturation Central:", protection: "Protections du Système", console: "Console de Commutation à 10 Canaux", lock: "🔒 Table de Mixage Bloquée" },
+    de: { treasury: "🔑 Sicheres Finanzmodul", billing: "🪙 Kern-Abrechnungs-Engine:", protection: "Systemschutzfunktionen", console: "10-Kanal-Universal-Mischpult", lock: "🔒 10-Kanal-Mischpult Gesperrt" },
+    it: { treasury: "🔑 Modulo di Tesoreria Sicuro", billing: "🪙 Motore di Fatturazione Principale:", protection: "Protezioni del Sistema", console: "Console Switchboard a 10 Canali", lock: "🔒 Switchboard 10 Canali Bloccato" },
+    pt: { treasury: "🔑 Módulo de Tesouraria Seguro", billing: "🪙 Motor de Faturamento Principal:", protection: "Proteções do Sistema", console: "Console de Comutação de 10 Canais", lock: "🔒 Painel de Controle Bloqueado" },
+    ru: { treasury: "🔑 Защищенный Модуль Казначейства", billing: "🪙 Основной Движок Биллинга:", protection: "Защита Системы", console: "10-Канальный Универсальный Пульт", lock: "🔒 Пульт Управления Заблокирован" },
+    zh: { treasury: "🔑 安全财务金库模块", billing: "🪙 核心计费引擎:", protection: "系统安全防护", console: "10通道通用导播控制台", lock: "🔒 10通道控制台已锁定" },
+    ja: { treasury: "🔑 セキュア財務モジュール", billing: "🪙 コア請求エンジン:", protection: "システム保護機能", console: "10チャンネル・配電盤・コンソール", lock: "🔒 10チャンネル配電盤ロック中" },
+    ko: { treasury: "🔑 보안 트레저리 모듈", billing: "🪙 핵심 빌링 엔진:", protection: "시스템 보호 장치", console: "10채널 유니버설 스위치보드 콘솔", lock: "🔒 10채널 스위치보드 잠김" },
+    hi: { treasury: "🔑 सुरक्षित ट्रेजरी मॉड्यूल", billing: "🪙 मुख्य बिलिंग引擎:", protection: "सिस्टम सुरक्षा", console: "10-चैनल यूनिवर्सल कंसोल", lock: "🔒 10-चैनल कंसोल लॉक है" },
+    ar: { treasury: "🔑 وحدة الخزنة الآمنة", billing: "🪙 محرك الفوترة الأساسي:", protection: "حماية النظام", console: "لوحة تحكم عالمية ذات 10 قنوات", lock: "🔒 لوحة التحكم 10 قنوات مغلقة" }
+};
+
+const dom = {
+    lang: document.getElementById('langSelect'),
+    tier: document.getElementById('tierSelect'),
+    lock: document.getElementById('switchboardLock'),
+    tTitle: document.getElementById('lblTreasuryTitle'),
+    bEng: document.getElementById('lblBillingEngine'),
+    pTitle: document.getElementById('lblProtectionTitle'),
+    cTitle: document.getElementById('lblConsoleTitle'),
+    lMsg: document.getElementById('lblLockMsg'),
+    btn1: document.getElementById('btnCh1'),
+    btn2: document.getElementById('btnCh2'),
+    hwBtn: document.getElementById('btnHardwareInit'),
+    video: document.getElementById('localVideoViewport'),
+    subs: document.getElementById('subtitleBox'),
+    trendsBox: document.getElementById('revenueTrendsBox'),
+    gross: document.getElementById('valGross'),
+    splits: document.getElementById('valSplits'),
+    net: document.getElementById('valNet'),
+    followers: document.getElementById('valFollowers'),
+    engagement: document.getElementById('valEngagement')
+};
+
+let cumulativeGross = 0.00;
+let baseFollowers = 2410200;
+
+dom.lang.addEventListener('change', (e) => {
+    const code = e.target.value;
+    const active = uiStrings[code] || uiStrings.en;
+    dom.tTitle.textContent = active.treasury;
+    dom.bEng.textContent = active.billing;
+    dom.pTitle.textContent = active.protection;
+    dom.cTitle.textContent = active.console;
+    dom.lMsg.textContent = active.lock;
+});
+
+let localStream = null;
+dom.hwBtn.addEventListener('click', async () => {
+    if (!localStream) {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            dom.video.srcObject = localStream;
+            dom.hwBtn.textContent = "🛑 Stop Video Hardware";
+            dom.hwBtn.classList.add('live');
+        } catch (err) {
+            alert("Hardware access request rejected: " + err.message);
+        }
+    } else {
+        localStream.getTracks().forEach(track => track.stop());
+        dom.video.srcObject = null;
+        localStream = null;
+        dom.hwBtn.textContent = "📷 Init Video Hardware";
+        dom.hwBtn.classList.remove('live');
+    }
+});
+
+dom.tier.addEventListener('change', (e) => {
+    if (e.target.value === 'free') {
+        dom.lock.classList.remove('hidden');
+        dom.trendsBox.style.display = "none";
+        dom.btn1.classList.add('disabled');
+        dom.btn2.classList.add('disabled');
+    } else {
+        dom.lock.classList.add('hidden');
+        dom.trendsBox.style.display = "block";
+        dom.btn1.classList.remove('disabled');
+        dom.btn2.classList.remove('disabled');
+        updateRevenueDashboard(0);
+    }
+});
+
+function updateRevenueDashboard(incomingTip) {
+    cumulativeGross += incomingTip;
+    const splitDecimals = cumulativeGross * 0.025;
+    const netPayout = cumulativeGross - splitDecimals;
+
+    dom.gross.textContent = `$${cumulativeGross.toFixed(2)}`;
+    dom.splits.textContent = `$${splitDecimals.toFixed(2)}`;
+    dom.net.textContent = `$${netPayout.toFixed(2)}`;
+}
+
+// OMNI-SOCIAL DATA SIMULATORS
+const mockNames = ["Jordan [TikTok]", "Tango [Twitter]", "April_VIP [Insta]", "John_D", "Yuki [Twitch]"];
+const mockPlatforms = ["TikTok", "X / Twitter", "Instagram", "Twitch", "YouTube"];
+const mockPhrases = ["Shared your live stream to my profile timeline!", "Inbound traffic hitting the stream card nodes.", "Followed! Check notifications matrix."];
+
+setInterval(() => {
+    document.getElementById('valTotalLive').textContent = (14000 + Math.floor(Math.random() * 500)).toLocaleString();
+    document.getElementById('valZoom').textContent = (1150 + Math.floor(Math.random() * 80)).toLocaleString();
+    document.getElementById('valOF').textContent = (2100 + Math.floor(Math.random() * 90)).toLocaleString();
+    document.getElementById('valPatreon').textContent = (2450 + Math.floor(Math.random() * 100)).toLocaleString();
+   
+    // Fluctuating Social Engagement Calculations
+    baseFollowers += Math.floor(Math.random() * 4) - 1;
+    dom.followers.textContent = (baseFollowers / 1000000).toFixed(4) + "M";
+    dom.engagement.textContent = (8.5 + Math.random() * 0.5).toFixed(1) + "%";
+
+    const links = ["[Social Sync] Merging omni-platform channel graphs...", "[Mesh Active] Ingesting real-time feed sharing tokens..."];
+    dom.subs.innerHTML = `<em>${links[Math.floor(Math.random() * links.length)]}</em>`;
+}, 4000);
+
+setInterval(() => {
+    const container = document.getElementById('chatContainer');
+    const row = document.createElement('div');
+    row.className = 'alert-row';
+   
+    const isTip = Math.random() > 0.6;
+    if (isTip) {
+        const tipAmount = parseFloat((5 + Math.random() * 95).toFixed(2));
+        row.style.borderLeftColor = "#34C759";
+        row.style.background = "rgba(52,199,89,0.05)";
+        row.innerHTML = `💵 <strong>${mockNames[Math.floor(Math.random() * 2)]}:</strong> Tipped $${tipAmount} from social profile link!`;
+        if (dom.tier.value === 'tier1') updateRevenueDashboard(tipAmount);
+    } else {
+        row.innerHTML = `<strong>[${mockPlatforms[Math.floor(Math.random() * mockPlatforms.length)]}] ${mockNames[Math.floor(Math.random() * mockNames.length)]}:</strong> ${mockPhrases[Math.floor(Math.random() * mockPhrases.length)]}`;
+    }
+   
+    container.appendChild(row);
+    if (container.children.length > 5) container.removeChild(container.children[0]);
+    container.scrollTop = container.scrollHeight;
+}, 3000);
+
+if(dom.tier.value === 'free') {
+    dom.btn1.classList.add('disabled');
+    dom.btn2.classList.add('disabled');
+}
+
+ 
