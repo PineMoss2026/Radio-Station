@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Stream EZ - Master Global Production Console</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="brand-container">
+            <div class="app-emblem-fallback"></div>
+            <div class="logo-text" id="txtLogo">Social Stream <span>EZ</span></div>
+        </div>
+        <div class="header-controls">
+            <select class="tier-selector" id="tierSelect">
+                <option value="free">👤 Account Level: Free Base Layer</option>
+                <option value="tier1">💳 Account Level: Paid Tier 1 ($20/wk)</option>
+            </select>
+            <select class="lang-selector" id="langSelect">
+                <option value="en">🌐 Universal Locale: English (US/UK)</option>
+                <option value="es">Español (Global)</option>
+                <option value="fr">Français (Worldwide)</option>
+                <option value="de">Deutsch</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Português</option>
+                <option value="ru">Русский</option>
+                <option value="zh">中文 (简体)</option>
+                <option value="ja">日本語</option>
+                <option value="ko">한국어 (ROK)</option>
+                <option value="hi">हिन्दी</option>
+                <option value="ar">العربية</option>
+            </select>
+        </div>
+    </header>
+
+    <div class="master-container">
+        <aside class="sidebar-left">
+            <div class="module-box social-profile-border">
+                <div class="module-title">📱 Creator Social Profile Link</div>
+                <div class="social-user-card">
+                    <div class="social-avatar">⚡</div>
+                    <div>
+                        <div class="social-handle">@GlobalStreamerEZ</div>
+                        <div class="social-meta">Network Status: <span class="active-green-text">SYNCED</span></div>
+                    </div>
+                </div>
+                <div class="social-metric-pill-box">
+                    <div class="social-pill">👥 <span id="valFollowers">2.4M</span> Fans</div>
+                    <div class="social-pill">🔥 <span id="valEngagement">8.7%</span> Eng.</div>
+                </div>
+            </div>
+
+            <div class="module-box secure-treasury-border">
+                <div class="module-title" id="lblTreasuryTitle">🔑 Secure Treasury Module</div>
+                <div class="config-card green-accent">
+                    <strong id="lblBillingEngine">🪙 Core Billing Engine:</strong><br>
+                    <span id="lblBillingDesc">1:1 Currency Multiplier Online. (20 JPY / 20 KRW / 5 INR Flat Scales)</span>
+                </div>
+                <div class="config-card blue-accent">
+                    <strong id="lblRoutingEngine">🗄️ Real-Time Split Routing:</strong><br>
+                    <span id="lblRoutingDesc">Whole Currencies ➡️ Primary Account/PayPal<br>Exchange Decimals/Pennies ➡️ Prepaid Routing</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-canvas">
+            <div class="module-box">
+                <div class="module-title" id="lblStagingTitle">Ingest Matrix Staging (Studio Layout)</div>
+                <div class="video-grid">
+                    <div class="video-feed blue-border">
+                        <video id="localVideoViewport" class="hardware-video" autoplay playsinline muted></video>
+                        <div class="feed-label" id="lblFeedA">🎸 Studio Feed Link A (Webcam)</div>
+                    </div>
+                    <div class="video-feed purple-border">
+                        <div class="waiting-mesh">Waiting for secondary mesh link...</div>
+                        <div class="feed-label" id="lblFeedB">🎙️ Studio Feed Link B</div>
+                    </div>
+                </div>
+
+                <div class="control-panel-mini">
+                    <button class="btn-action" id="btnHardwareInit">📷 Init Video Hardware</button>
+                </div>
+
+                <div class="subtitle-box" id="subtitleBox">
+                    <em>[Live Translation Overlay] Monitoring audio lines... Subtitles translate dynamically down below.</em>
+                </div>
+            </div>
+
+            <div class="module-box" id="switchboardModule">
+                <div class="lock-overlay" id="switchboardLock">
+                    <div class="lock-msg" id="lblLockMsg">🔒 10-Channel Switchboard Locked</div>
+                    <div id="lblLockDesc" class="lock-desc">Upgrade your account to a Paid Tier level to unlock hardware vocal routing lines.</div>
+                </div>
+                <div class="module-title" id="lblConsoleTitle">10-Channel Universal Switchboard Console</div>
+                <table class="switchboard-table">
+                    <thead>
+                        <tr>
+                            <th>CH</th>
+                            <th id="thSource">Ingest Source Assignment</th>
+                            <th id="thStatus">Matrix Status</th>
+                            <th id="thMesh">Stream Mesh</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>01</strong></td>
+                            <td class="primary-vocal" id="ch1Desc">Primary Vocal Stream (Low-Latency Opus)</td>
+                            <td><button class="btn-patch" id="btnCh1">PATCHED</button></td>
+                            <td>Active Link</td>
+                        </tr>
+                        <tr>
+                            <td><strong>02</strong></td>
+                            <td class="primary-vocal" id="ch2Desc">Instrument Backing Stream (P2P Clock)</td>
+                            <td><button class="btn-patch" id="btnCh2">PATCHED</button></td>
+                            <td>Active Link</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <aside class="sidebar-right">
+            <div class="module-box">
+                <div class="module-title" id="lblAnalyticsTitle">📈 Consolidated Live Analytics</div>
+                <div class="stat-row"><strong id="lblTotalLive">Total Live Viewers:</strong> <span class="active-green-text" id="valTotalLive">14,230</span></div>
+                <div class="stat-row">🏢 Zoom Matrix: <span id="valZoom">1,200</span></div>
+                <div class="stat-row">🧡 OnlyFans Link: <span id="valOF">2,130</span></div>
+                <div class="stat-row">🪙 Patreon Stream: <span id="valPatreon">2,500</span></div>
+               
+                <div class="revenue-trends-panel" id="revenueTrendsBox">
+                    <div class="trend-divider"></div>
+                    <div class="trend-header">💰 TIER 1 REVENUE METRICS</div>
+                    <div class="trend-row">Gross Processing: <span id="valGross">$0.00</span></div>
+                    <div class="trend-row">Platform Splitting Sub-Pennies: <span id="valSplits">$0.00</span></div>
+                    <div class="trend-row">Net Est. Weekly Payout: <span class="active-green-text" id="valNet">$0.00</span></div>
+                </div>
+            </div>
+            <div class="module-box flex-column flex-1">
+                <div class="module-title" id="lblFeedTitle">💬 Aggregated Omni-Stream Feed</div>
+                <div class="chat-container" id="chatContainer"></div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
+ 
